@@ -4,12 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 프로젝트 개요
 
-이 저장소는 한국 고고학 발굴 보고서 PDF 파일들을 관리하는 프로젝트입니다. 주로 전남 지역(나주, 순천, 광양, 무안, 함평, 해남 등)의 청동기시대 및 삼국시대 유적 보고서 약 150여 개를 포함합니다.
+이 저장소는 **한국 고고학 발굴 보고서 작성 시스템**입니다. PDF 파일 관리뿐만 아니라, 고고학 발굴조사보고서의 고찰(考察) 섹션을 체계적으로 작성할 수 있는 Skills 시스템을 제공합니다.
+
+### 프로젝트 범위
+1. **PDF 관리**: 전남 지역(나주, 순천, 광양, 무안, 함평, 해남 등) 청동기시대 및 삼국시대 유적 보고서 약 150여 개 관리
+2. **보고서 작성**: 8개의 전문 Skills를 활용한 학술 보고서 고찰 작성 자동화
 
 ### 프로젝트 특성
-- **문서 중심**: 애플리케이션 코드 없음, 순수 문서 관리
+- **문서 중심**: 애플리케이션 코드 없음, 순수 문서 관리 및 작성
 - **대용량 파일**: 개별 PDF 파일 100MB~1GB 규모
 - **학술 자료**: 고고학 전문 용어 및 한국어 지명 포함
+- **자동화 시스템**: Skills 기반 보고서 고찰 자동 생성
 
 ## Context 관리 전략 (Claude Code 개발자 노하우)
 
@@ -54,20 +59,43 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### 4. Skills 시스템 활용
 
-#### 설치된 Project Skills
+#### 설치된 Project Skills (9개)
 
-**pdf-management Skill**
-- 위치: `.claude/skills/pdf-management/`
-- 기능: PDF 파일 검색, 분류, 메타데이터 추출
-- 자동 호출: "나주 지역 보고서 찾아줘" 같은 요청 시
+**1. pdf-management Skill**
+- **위치**: `.claude/skills/pdf-management/`
+- **기능**: PDF 파일 검색, 분류, 메타데이터 추출
+- **자동 호출**: "나주 지역 보고서 찾아줘" 같은 요청 시
+
+**2. 고찰 작성 Skills (8개)**
+
+발굴조사보고서의 고찰 섹션을 체계적으로 작성하는 전문 Skills:
+
+| Skill 이름 | 설명 | 트리거 예시 |
+|-----------|------|------------|
+| `gochal-01-conclusion` | 결론 및 종합 분석 | "결론 작성", "종합 분석" |
+| `gochal-02-yugu-analysis` | 유구(주거지, 수혈 등) 분석 | "유구 분석", "주거지 형태 분석" |
+| `gochal-03-yumul-analysis` | 유물(토기, 석기 등) 분석 | "유물 분석", "토기 형식 분류" |
+| `gochal-04-pyeonnyeon` | 편년(시기 설정) | "편년 고찰", "연대 분석" |
+| `gochal-05-site-comparison` | 주변 유적 비교 | "주변 유적 비교", "지역 내 위치" |
+| `gochal-06-science-analysis` | 자연과학 분석 종합 | "자연과학 분석", "AMS 연대 해석" |
+| `gochal-07-culture-restoration` | 문화 양상 및 생활상 복원 | "생활상 복원", "문화 양상 분석" |
+| `gochal-08-summary` | 요약 및 초록 작성 | "요약 작성", "영문 abstract" |
 
 #### Skills 사용 패턴
 
 Skills는 **자동으로 호출**됩니다. 명시적 호출 불필요:
 ```
-❌ "/pdf-management 실행"  (슬래시 명령어가 아님)
-✅ "순천 지역 PDF 파일 목록 만들어줘"  (자동 호출됨)
+❌ "/gochal-02-yugu-analysis 실행"  (슬래시 명령어가 아님)
+✅ "주거지 형태 분석해줘"  (자동 호출됨)
 ```
+
+#### Skills 입력 데이터 형식
+
+고찰 Skills는 다양한 형식의 입력을 처리합니다:
+- **Excel/CSV**: 유구/유물 목록 스프레드시트
+- **JSON**: 표준화된 데이터 구조
+- **Markdown**: 구조화된 텍스트
+- **대화 입력**: 사용자가 직접 제공하는 정보
 
 ### 5. Context Window 최적화
 
@@ -158,7 +186,45 @@ stat pdf/나주복암리유적.pdf
 python -c "import os; print(os.path.getsize('pdf/file.pdf'))"
 ```
 
-### 3. 문서 분류 작업
+### 3. 보고서 고찰 작성 워크플로우 (NEW!)
+
+**전체 프로세스:**
+```
+1. PDF 파일 수집 → pdf-management Skill 활용
+2. 유구 데이터 준비 → Excel/CSV/JSON 형식
+3. 고찰 작성 요청 → 해당 gochal Skill 자동 호출
+4. 결과 검토 및 수정
+5. GitHub에 커밋
+```
+
+**단계별 예시:**
+
+**Step 1: 유구 분석**
+```
+"나주 복암리 유적의 주거지 데이터를 분석해서 유구 분석 고찰 작성해줘"
+→ gochal-02-yugu-analysis 자동 호출
+→ Excel 데이터 → JSON 변환 → Markdown 생성
+```
+
+**Step 2: 유물 분석**
+```
+"출토된 무문토기와 석기 분석해서 유물 분석 고찰 작성해줘"
+→ gochal-03-yumul-analysis 자동 호출
+```
+
+**Step 3: 편년**
+```
+"AMS 연대측정 결과와 유물 형식 분석을 종합해서 편년 고찰 작성해줘"
+→ gochal-04-pyeonnyeon 자동 호출
+```
+
+**Step 4: 결론**
+```
+"지금까지의 모든 고찰을 종합해서 결론 작성해줘"
+→ gochal-01-conclusion 자동 호출
+```
+
+### 4. 문서 분류 작업
 
 **단계별 접근:**
 1. @참조로 README와 CLAUDE.md 컨텍스트 제공
@@ -173,12 +239,26 @@ python -c "import os; print(os.path.getsize('pdf/file.pdf'))"
 ├── pdf/                    # PDF 파일들 (Git 제외, 로컬 전용)
 │   ├── 나주*.pdf          # 나주 지역 보고서
 │   ├── 순천*.pdf          # 순천 지역 보고서
-│   └── ...
+│   └── 주거지/            # 주거지 관련 자료
 ├── data/                   # 데이터 폴더 (Git 제외, 로컬 전용)
+├── 고찰/                   # 고찰 작성 작업 디렉토리
+│   ├── CLAUDE.md          # 고찰 작성 가이드
+│   ├── skill-제작-계획서.md
+│   └── 고찰.md
+├── docs/                   # 문서 디렉토리
+│   └── context-management-guide.md  # Context 관리 실전 가이드
 ├── .claude/
-│   └── skills/
-│       └── pdf-management/  # PDF 관리 Skill
-│           └── SKILL.md
+│   ├── skills/
+│   │   ├── pdf-management/           # PDF 관리 Skill
+│   │   ├── gochal-01-conclusion/     # 결론 작성 Skill
+│   │   ├── gochal-02-yugu-analysis/  # 유구 분석 Skill
+│   │   ├── gochal-03-yumul-analysis/ # 유물 분석 Skill
+│   │   ├── gochal-04-pyeonnyeon/     # 편년 Skill
+│   │   ├── gochal-05-site-comparison/  # 주변 유적 비교 Skill
+│   │   ├── gochal-06-science-analysis/ # 자연과학 분석 Skill
+│   │   ├── gochal-07-culture-restoration/ # 문화 양상 복원 Skill
+│   │   └── gochal-08-summary/        # 요약 작성 Skill
+│   └── settings.local.json
 ├── .github/
 │   └── workflows/
 │       └── ci.yml          # GitHub Actions 워크플로우
@@ -186,6 +266,51 @@ python -c "import os; print(os.path.getsize('pdf/file.pdf'))"
 ├── README.md               # 프로젝트 설명
 └── CLAUDE.md               # 이 파일 (Project Memory)
 ```
+
+## 고찰 작성 시스템 상세 (NEW!)
+
+### 고찰 Skills 아키텍처
+
+각 Skill은 다음 구조로 구성됩니다:
+
+```
+gochal-XX-name/
+├── SKILL.md              # Skill 정의 및 프롬프트
+├── assets/
+│   └── template.md       # Markdown 출력 템플릿
+├── references/
+│   ├── examples.md       # 실제 보고서 예시
+│   └── terminology.md    # 전문 용어 사전
+└── scripts/
+    └── data_processor.py # 데이터 변환 스크립트 (Python)
+```
+
+### 데이터 처리 파이프라인
+
+```
+Excel/CSV/JSON/Markdown 입력
+    ↓
+scripts/data_processor.py (표준화)
+    ↓
+표준 JSON 데이터
+    ↓
+Skill 프롬프트 + 템플릿
+    ↓
+학술 논문 수준 Markdown 고찰
+```
+
+### 고찰 작성 모범 사례
+
+**DO:**
+- Excel 파일로 유구/유물 데이터 정리 후 제공
+- 한 번에 하나의 고찰 섹션씩 작성
+- 생성된 Markdown 결과 검토 후 수정 요청
+- 전문 용어는 references/terminology.md 참조
+
+**DON'T:**
+- 한 번에 모든 고찰 섹션 동시 작성 요청 ❌
+- 데이터 없이 "상상으로" 고찰 작성 요청 ❌
+- Skills 수동 호출 시도 ❌
 
 ## GitHub Actions 워크플로우
 
@@ -218,13 +343,21 @@ Extended Thinking → 심층 분류 전략
 pdf-management Skill → 자동 처리
 ```
 
+### 보고서 작성 (NEW!)
+```
+데이터 준비 → 고찰 요청 → Skill 자동 호출 → 결과 검토
+```
+
 ## 주의사항
 
 - 현재 이 저장소에는 **애플리케이션 코드가 없습니다**
 - 빌드, 테스트, 또는 배포 프로세스가 없습니다
-- 주요 목적은 대용량 PDF 파일의 조직적 관리입니다
+- 주요 목적은:
+  1. 대용량 PDF 파일의 조직적 관리
+  2. 고고학 발굴조사보고서 고찰 자동 생성
 - 모든 대화와 응답은 **한국어로만** 작성하세요
 - PDF 내용 읽기는 별도 PDF 처리 도구 필요 (이미지로 취급)
+- 고찰 작성 시 반드시 실제 데이터 기반으로 작성 (상상 금지)
 
 ## 고급 기능
 
@@ -249,6 +382,12 @@ PDF 파일 통계 분석 및 보고서 생성
 
 ## 참고 자료
 
+### 프로젝트 문서
+- `docs/context-management-guide.md` - Claude Code Context 관리 실전 가이드 (2025년 10월)
+- `고찰/CLAUDE.md` - 고찰 작성 시스템 가이드
+- `고찰/skill-제작-계획서.md` - Skills 제작 계획
+
+### Claude Code 공식 문서
 이 CLAUDE.md는 다음 공식 문서를 기반으로 작성되었습니다:
 - [Claude Code Memory System](https://docs.claude.com/en/docs/claude-code/memory.md)
 - [Skills Documentation](https://docs.claude.com/en/docs/claude-code/skills.md)
