@@ -382,9 +382,36 @@ PDF 파일 통계 분석 및 보고서 생성
 
 ## 참고 자료
 
-### 프로젝트 문서
+### 프로젝트 문서 (CLAUDE.md 파일들)
+
+이 프로젝트는 각 디렉토리별로 특화된 CLAUDE.md 파일을 관리합니다:
+
+1. **`/CLAUDE.md`** (이 파일) - 프로젝트 전체 가이드
+   - 프로젝트 개요 및 범위
+   - Context 관리 전략
+   - MCP 서버 사용 우선순위
+   - 전체 워크플로우
+
+2. **`고찰/CLAUDE.md`** - 고찰 작성 Skills 사용 가이드
+   - 8개 고찰 Skills 사용법
+   - 데이터 준비 가이드
+   - 워크플로우 예시
+   - 문제 해결
+
+3. **`.claude/CLAUDE.md`** - Skills 개발 가이드
+   - Skill 아키텍처 및 구조
+   - SKILL.md 작성 가이드
+   - Skills 개발 워크플로우
+   - 데이터 파이프라인
+
+4. **`docs/CLAUDE.md`** - 문서 작성 스타일 가이드
+   - Markdown 컨벤션
+   - 문서 유형별 가이드
+   - 품질 체크리스트
+   - 파일 명명 규칙
+
+### 기타 프로젝트 문서
 - `docs/context-management-guide.md` - Claude Code Context 관리 실전 가이드 (2025년 10월)
-- `고찰/CLAUDE.md` - 고찰 작성 시스템 가이드
 - `고찰/skill-제작-계획서.md` - Skills 제작 계획
 
 ### Claude Code 공식 문서
