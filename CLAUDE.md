@@ -118,13 +118,31 @@ Skills는 **자동으로 호출**됩니다. 명시적 호출 불필요:
 
 이 디렉토리들은 `.gitignore`에 의해 제외되며, **로컬에서만** 관리됩니다. 이 규칙을 절대 변경하지 마세요.
 
-### Git 커밋 시 필수 사항
+### Git 커밋 방법
 
-**항상 smithery-ai-github MCP를 사용하여 커밋하고 푸시하세요.**
-
-로컬 git 명령어 대신 GitHub MCP 도구를 사용:
+**권장: smithery-ai-github MCP 사용**
 - `mcp__smithery-ai-github__create_or_update_file` - 파일 생성/업데이트
 - `mcp__smithery-ai-github__push_files` - 여러 파일 한 번에 푸시
+
+**대안: 로컬 git 명령어**
+
+MCP 인증 오류 시 로컬 git 사용 가능:
+```bash
+git add <files>
+git commit -m "커밋 메시지"
+git push origin main
+```
+
+**커밋 메시지 형식:**
+```
+docs: <변경 사항 요약>
+
+[선택] 상세 설명
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
 
 ## MCP 서버 사용 우선순위
 
@@ -246,19 +264,21 @@ python -c "import os; print(os.path.getsize('pdf/file.pdf'))"
 │   ├── skill-제작-계획서.md
 │   └── 고찰.md
 ├── docs/                   # 문서 디렉토리
-│   └── context-management-guide.md  # Context 관리 실전 가이드
+│   └── CLAUDE.md          # 문서 작성 스타일 가이드
 ├── .claude/
-│   ├── skills/
-│   │   ├── pdf-management/           # PDF 관리 Skill
-│   │   ├── gochal-01-conclusion/     # 결론 작성 Skill
-│   │   ├── gochal-02-yugu-analysis/  # 유구 분석 Skill
-│   │   ├── gochal-03-yumul-analysis/ # 유물 분석 Skill
-│   │   ├── gochal-04-pyeonnyeon/     # 편년 Skill
-│   │   ├── gochal-05-site-comparison/  # 주변 유적 비교 Skill
-│   │   ├── gochal-06-science-analysis/ # 자연과학 분석 Skill
-│   │   ├── gochal-07-culture-restoration/ # 문화 양상 복원 Skill
-│   │   └── gochal-08-summary/        # 요약 작성 Skill
-│   └── settings.local.json
+│   ├── CLAUDE.md          # Skills 개발 가이드
+│   ├── output-styles/     # 출력 스타일 템플릿
+│   ├── settings.local.json
+│   └── skills/            # Skills 디렉토리 (9개)
+│       ├── pdf-management/           # PDF 관리 Skill
+│       ├── gochal-01-conclusion/     # 결론 작성 Skill
+│       ├── gochal-02-yugu-analysis/  # 유구 분석 Skill
+│       ├── gochal-03-yumul-analysis/ # 유물 분석 Skill
+│       ├── gochal-04-pyeonnyeon/     # 편년 Skill
+│       ├── gochal-05-site-comparison/  # 주변 유적 비교 Skill
+│       ├── gochal-06-science-analysis/ # 자연과학 분석 Skill
+│       ├── gochal-07-culture-restoration/ # 문화 양상 복원 Skill
+│       └── gochal-08-summary/        # 요약 작성 Skill
 ├── .github/
 │   └── workflows/
 │       └── ci.yml          # GitHub Actions 워크플로우
@@ -411,8 +431,8 @@ PDF 파일 통계 분석 및 보고서 생성
    - 파일 명명 규칙
 
 ### 기타 프로젝트 문서
-- `docs/context-management-guide.md` - Claude Code Context 관리 실전 가이드 (2025년 10월)
 - `고찰/skill-제작-계획서.md` - Skills 제작 계획
+- `고찰/고찰.md` - 고찰 작성 현황 및 예시
 
 ### Claude Code 공식 문서
 이 CLAUDE.md는 다음 공식 문서를 기반으로 작성되었습니다:
